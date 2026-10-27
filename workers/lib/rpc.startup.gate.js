@@ -19,9 +19,9 @@ class RpcStartupGate {
     this._finishStartup()
   }
 
-  async isBlocked () {
+  async isReady () {
     await this._startup
-    return !this._accepting
+    return this._accepting
   }
 }
 

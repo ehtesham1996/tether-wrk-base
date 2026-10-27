@@ -42,8 +42,10 @@ This method returns the RPC client key of the worker.
 
 This method starts the RPC server using the `hp-svc-facs-net` facility. It can be overridden if extra logic is needed while starting the RPC server.
 
-The base-owned `net_r0` facility holds allowed peers' incoming handshakes until
-the worker emits `started`, after the complete subclass `_start` chain finishes.
+The base supplies the networking facility's optional `rpcServerReady` hook through
+the normal facility options. The hook waits until the worker emits `started`,
+after the complete subclass `_start` chain finishes. Facility registration and
+the networking facility class are unchanged.
 This also applies when an override calls `this.net_r0.startRpcServer()` directly
 to configure a capability or custom firewall. Existing peer allowlists, custom
 firewalls, and capability checks remain enforced; caller timeouts still apply.
