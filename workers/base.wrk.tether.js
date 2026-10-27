@@ -5,8 +5,17 @@ const async = require('async')
 const crypto = require('crypto')
 const fs = require('fs').promises
 const path = require('path')
+const StartupNetFacility = require('./lib/startup.net.facility')
 
 class TetherWrkBase extends WrkBase {
+  facility (type, name, ns, opts) {
+    if (name !== '@tetherto/hp-svc-facs-net' || ns !== 'r0') return super.facility(type, name, ns, opts)
+
+    const facility = new StartupNetFacility(this, { ns, ...opts }, { env: this.ctx.env })
+    facility.__name = this.cleanFacName(name)
+    return facility
+  }
+
   init () {
     super.init()
 
@@ -66,6 +75,11 @@ class TetherWrkBase extends WrkBase {
     process.on('uncaughtException', this._uncaughtErrorHandler.bind(this))
     process.on('unhandledRejection', this._uncaughtErrorHandler.bind(this))
     return super.start(cb)
+  }
+
+  stop (cb) {
+    this.net_r0?.closeRpcStartup?.()
+    return super.stop(cb)
   }
 
   _uncaughtErrorHandler (err) {
